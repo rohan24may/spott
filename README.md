@@ -1,37 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+```md
+# 🚀 Spott
 
-## Getting Started
+Spott is a modern event discovery platform built with **Next.js, Convex, and Clerk**.  
+It helps users discover events around them based on their interests and location with a fast, real-time experience.
 
+---
 
-First, run the development server:
+## ✨ Features
 
+- 🔐 Authentication with Clerk  
+- 🧠 Personalized onboarding (interests + location)  
+- 📍 Discover nearby events  
+- ⚡ Real-time backend powered by Convex  
+- 🎨 Modern UI with Tailwind CSS & shadcn/ui  
+- 🌙 Responsive and clean interface  
+
+---
+
+## 🛠 Tech Stack
+
+**Frontend**
+- Next.js (App Router)
+- React
+- Tailwind CSS
+- shadcn/ui
+- Lucide Icons
+
+**Backend**
+- Convex (database + server functions)
+
+**Authentication**
+- Clerk
+
+---
+
+## ⚙️ Getting Started
+
+### 1️⃣ Install dependencies
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2️⃣ Start Convex backend
+```bash
+npx convex dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3️⃣ Run development server
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+App runs at:
+```
+http://localhost:3000
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📁 Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+spott/
+│
+├── app/            # Next.js app router
+├── components/     # Reusable UI components
+├── convex/         # Backend functions & schema
+├── hooks/          # Custom React hooks
+├── lib/            # Utilities & constants
+├── public/         # Static assets
+│
+└── package.json
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🧠 Core Idea
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Spott helps users quickly find what's happening around them.  
+Users sign in, complete onboarding, and get event suggestions tailored to their interests and location.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🚧 Future Scope
+
+- 🎟 Event creation & management  
+- ❤️ Save / bookmark events  
+- 🔔 Notifications  
+- 📊 Organizer dashboard  
+- 💳 Paid events & ticketing  
+
+---
+
+## 👨‍💻 Author
+
+**Rohan**  
+GitHub: https://github.com/rohan24may
+
+---
+
+## ⭐ Support
+
+If you like this project, consider giving it a star on GitHub and sharing feedback!
+```
