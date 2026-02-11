@@ -106,7 +106,7 @@ export default function Header() {
 
             <Unauthenticated>
               <SignInButton mode="modal">
-                <Button size="sm">Sign In</Button>
+                <Button size="sm" className="cursor-pointer">Sign In</Button>
               </SignInButton>
             </Unauthenticated>
           </div>

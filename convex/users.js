@@ -62,21 +62,24 @@ export const getCurrentUser = query({
       return null;
     }
 
-    // 🔹 Lookup by tokenIdentifier
-    const user = await ctx.db
+    // Lookup by tokenIdentifier
+    let user = await ctx.db
       .query("users")
       .withIndex("by_token", (q) =>
         q.eq("tokenIdentifier", identity.tokenIdentifier)
       )
       .unique();
 
+    // If user doesn't exist → create it
     if (!user) {
-      throw new Error("User not found");
+      const newUserId = await ctx.runMutation(internal.users.store);
+      user = await ctx.db.get(newUserId);
     }
 
     return user;
   },
 });
+
 
 // Complete onboarding (attendee preferences)
 export const completeOnboarding = mutation({
