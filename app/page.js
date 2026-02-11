@@ -32,9 +32,13 @@ export default function LandingPage() {
             </p>
 
             <Link href="/explore">
-              <Button size="xs" className={"rounded-full cursor-pointer"}>
-                Get Started
-              </Button>
+              <Button
+                     size="lg"
+                      className="rounded-full cursor-pointer px-6 py-5 text-base"
+                  >
+                    Get Started
+               </Button>
+
             </Link>
           </div>
 
