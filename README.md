@@ -1,19 +1,22 @@
 ```md
 # 🚀 Spott
 
-Spott is a modern event discovery platform built with **Next.js, Convex, and Clerk**.  
-It helps users discover events around them based on their interests and location with a fast, real-time experience.
+Spott is a modern event discovery and management platform built with **Next.js, Convex, and Clerk**.  
+It allows users to explore events, create their own, register for tickets, and manage everything in one place with a fast, real-time experience.
 
 ---
 
 ## ✨ Features
 
-- 🔐 Authentication with Clerk  
-- 🧠 Personalized onboarding (interests + location)  
-- 📍 Discover nearby events  
-- ⚡ Real-time backend powered by Convex  
-- 🎨 Modern UI with Tailwind CSS & shadcn/ui  
-- 🌙 Responsive and clean interface  
+- 🔐 Authentication with Clerk (Google + email)
+- 🧠 Personalized onboarding (interests + location)
+- 📍 Discover nearby events
+- 🎟 Event creation & ticket registration
+- 📊 Manage created events and attendees
+- 📱 QR-based ticket viewing & validation
+- ⚡ Real-time backend powered by Convex
+- 🎨 Modern UI with Tailwind CSS & shadcn/ui
+- 🌙 Dark mode & responsive design
 
 ---
 
@@ -27,10 +30,16 @@ It helps users discover events around them based on their interests and location
 - Lucide Icons
 
 **Backend**
-- Convex (database + server functions)
+- Convex (database + queries + mutations)
 
 **Authentication**
 - Clerk
+
+**Other Tools**
+- React Hook Form + Zod (forms & validation)
+- Unsplash integration (event images)
+- QR Code generation & scanning
+- Gemini/OpenAI (AI event creation)
 
 ---
 
@@ -63,11 +72,11 @@ http://localhost:3000
 ```
 spott/
 │
-├── app/            # Next.js app router
+├── app/            # Pages, routing, layouts
 ├── components/     # Reusable UI components
-├── convex/         # Backend functions & schema
+├── convex/         # Backend functions & database schema
 ├── hooks/          # Custom React hooks
-├── lib/            # Utilities & constants
+├── lib/            # Utilities & helper data
 ├── public/         # Static assets
 │
 └── package.json
@@ -75,20 +84,28 @@ spott/
 
 ---
 
-## 🧠 Core Idea
+## 🧠 Core Flow
 
-Spott helps users quickly find what's happening around them.  
-Users sign in, complete onboarding, and get event suggestions tailored to their interests and location.
+Public users:
+→ Explore events  
+→ View event details  
+
+After login:
+→ Complete onboarding  
+→ Create events  
+→ Register/book tickets  
+→ Manage events & attendees  
+→ View personal tickets  
 
 ---
 
 ## 🚧 Future Scope
 
-- 🎟 Event creation & management  
-- ❤️ Save / bookmark events  
-- 🔔 Notifications  
-- 📊 Organizer dashboard  
+- 🔔 Notifications system  
+- ❤️ Saved events  
+- 📊 Advanced organizer dashboard  
 - 💳 Paid events & ticketing  
+- 📍 Location-based smart recommendations  
 
 ---
 
@@ -96,7 +113,4 @@ Users sign in, complete onboarding, and get event suggestions tailored to their 
 
 **Rohan**  
 GitHub: https://github.com/rohan24may
-
----
-
-
+```
