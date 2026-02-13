@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { Building, Crown, Plus, Ticket } from "lucide-react";
-import { SignInButton, useAuth, UserButton } from "@clerk/nextjs";
+import { Building, Crown, Plus, Sparkles, Ticket } from "lucide-react";
+import { SignInButton, useAuth, UserButton, useUser } from "@clerk/nextjs";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { BarLoader } from "react-spinners";
 import { useStoreUser } from "@/hooks/use-store-user";
@@ -17,7 +17,6 @@ import { Badge } from "./ui/badge";
 
 export default function Header() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   const { isLoading } = useStoreUser();
   const { showOnboarding, handleOnboardingComplete, handleOnboardingSkip } =
@@ -26,27 +25,10 @@ export default function Header() {
   const { has } = useAuth();
   const hasPro = has?.({ plan: "pro" });
 
-  // detect scroll for shrink + shadow
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <>
-      <nav
-        className={`fixed top-0 left-0 right-0 z-20 backdrop-blur-xl transition-all duration-300
-        ${
-          scrolled
-            ? "bg-zinc-950/80 border-b border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.6)] py-2"
-            : "bg-zinc-950/60 border-b border-white/10 py-4"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between transition-all duration-300">
-          
+      <nav className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-xl z-20 border-b">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
@@ -54,12 +36,10 @@ export default function Header() {
               alt="Spott logo"
               width={500}
               height={500}
-              className={`transition-all duration-300 ${
-                scrolled ? "h-9" : "h-11"
-              } w-auto`}
+              className="w-full h-11"
               priority
             />
-
+            {/* <span className="text-purple-500 text-2xl font-bold">spott*</span> */}
             {hasPro && (
               <Badge className="bg-linear-to-r from-pink-500 to-orange-500 gap-1 text-white ml-3">
                 <Crown className="w-3 h-3" />
@@ -68,52 +48,43 @@ export default function Header() {
             )}
           </Link>
 
-          {/* Search & Location - Desktop */}
+          {/* Search & Location - Desktop Only */}
           <div className="hidden md:flex flex-1 justify-center">
             <SearchLocationBar />
           </div>
 
-          {/* Right Side */}
+          {/* Right Side Actions */}
           <div className="flex items-center">
-            
+            {/* Show Pro badge or Upgrade button */}
             {!hasPro && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowUpgradeModal(true)}
-                className="hover:bg-white/10 transition"
               >
                 Pricing
               </Button>
             )}
 
-            <Button
-              variant="ghost"
-              size="sm"
-              asChild
-              className="mr-2 hover:bg-white/10 transition"
-            >
+            <Button variant="ghost" size="sm" asChild className={"mr-2"}>
               <Link href="/explore">Explore</Link>
             </Button>
 
             <Authenticated>
-              <Button
-                size="sm"
-                asChild
-                className="flex gap-2 mr-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-[1.03] transition"
-              >
+              {/* Create Event Button */}
+              <Button size="sm" asChild className="flex gap-2 mr-4">
                 <Link href="/create-event">
                   <Plus className="w-4 h-4" />
                   <span className="hidden sm:inline">Create Event</span>
                 </Link>
               </Button>
 
+              {/* User Button */}
               <UserButton
                 afterSignOutUrl="/"
                 appearance={{
                   elements: {
-                    avatarBox:
-                      "w-9 h-9 ring-2 ring-white/10 hover:ring-white/30 transition",
+                    avatarBox: "w-9 h-9",
                   },
                 }}
               >
@@ -135,19 +106,14 @@ export default function Header() {
 
             <Unauthenticated>
               <SignInButton mode="modal">
-                <Button
-                  size="sm"
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-[1.03] transition"
-                >
-                  Sign In
-                </Button>
+                <Button size="sm" className="cursor-pointer">Sign In</Button>
               </SignInButton>
             </Unauthenticated>
           </div>
         </div>
 
-        {/* Mobile Search */}
-        <div className="md:hidden border-t border-white/10 px-3 py-3 bg-zinc-950/70 backdrop-blur-lg">
+        {/* Mobile Search & Location - Below Header */}
+        <div className="md:hidden border-t px-3 py-3">
           <SearchLocationBar />
         </div>
 
@@ -158,6 +124,7 @@ export default function Header() {
         )}
       </nav>
 
+      {/* Onboarding Modal */}
       <OnboardingModal
         isOpen={showOnboarding}
         onClose={handleOnboardingSkip}
