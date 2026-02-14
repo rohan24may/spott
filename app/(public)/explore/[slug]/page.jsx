@@ -15,21 +15,17 @@ export default function DynamicExplorePage() {
   const router = useRouter();
   const slug = params.slug;
 
-  // Check if it's a valid category
   const categoryInfo = CATEGORIES.find((cat) => cat.id === slug);
   const isCategory = !!categoryInfo;
 
-  // If not a category, validate location
   const { city, state, isValid } = !isCategory
     ? parseLocationSlug(slug)
     : { city: null, state: null, isValid: true };
 
-  // If it's not a valid category and not a valid location, show 404
   if (!isCategory && !isValid) {
     notFound();
   }
 
-  // Fetch events based on type
   const { data: events, isLoading } = useConvexQuery(
     isCategory
       ? api.explore.getEventsByCategory
@@ -48,37 +44,43 @@ export default function DynamicExplorePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
       </div>
     );
   }
 
-  // Category View
+  /* ---------------- CATEGORY VIEW ---------------- */
+
   if (isCategory) {
     return (
-      <>
-        <div className="pb-5">
-          <div className="flex items-center gap-4 mb-4">
+      <div className="space-y-10">
+        {/* HERO */}
+        <section className="rounded-3xl p-10 md:p-14 bg-gradient-to-br from-indigo-50 via-pink-50 to-orange-50 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-pink-500/10 to-orange-500/10 blur-3xl" />
+
+          <div className="relative flex items-center gap-6">
             <div className="text-6xl">{categoryInfo.icon}</div>
+
             <div>
-              <h1 className="text-5xl md:text-6xl font-bold">
+              <h1 className="text-4xl md:text-6xl font-bold">
                 {categoryInfo.label}
               </h1>
-              <p className="text-lg text-muted-foreground mt-2">
+              <p className="text-lg text-muted-foreground mt-2 max-w-xl">
                 {categoryInfo.description}
               </p>
+
+              {events && events.length > 0 && (
+                <p className="mt-4 text-sm text-muted-foreground">
+                  {events.length} event{events.length !== 1 ? "s" : ""} found
+                </p>
+              )}
             </div>
           </div>
+        </section>
 
-          {events && events.length > 0 && (
-            <p className="text-muted-foreground">
-              {events.length} event{events.length !== 1 ? "s" : ""} found
-            </p>
-          )}
-        </div>
-
+        {/* GRID */}
         {events && events.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {events.map((event) => (
               <EventCard
                 key={event._id}
@@ -92,37 +94,48 @@ export default function DynamicExplorePage() {
             No events found in this category.
           </p>
         )}
-      </>
+      </div>
     );
   }
 
-  // Location View
+  /* ---------------- LOCATION VIEW ---------------- */
+
   return (
-    <>
-      <div className="pb-5">
-        <div className="flex items-center gap-4 mb-4">
+    <div className="space-y-10">
+      {/* HERO */}
+      <section className="rounded-3xl p-10 md:p-14 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-blue-500/10 blur-3xl" />
+
+        <div className="relative flex items-center gap-6">
           <div className="text-6xl">📍</div>
+
           <div>
-            <h1 className="text-5xl md:text-6xl font-bold">Events in {city}</h1>
-            <p className="text-lg text-muted-foreground mt-2">{state}, India</p>
+            <h1 className="text-4xl md:text-6xl font-bold">
+              Events in {city}
+            </h1>
+            <p className="text-lg text-muted-foreground mt-2">
+              {state}, India
+            </p>
+
+            <div className="flex items-center gap-3 mt-4">
+              <Badge className="gap-2 bg-white/80 backdrop-blur">
+                <MapPin className="w-3 h-3" />
+                {city}, {state}
+              </Badge>
+
+              {events && events.length > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  {events.length} event{events.length !== 1 ? "s" : ""} found
+                </p>
+              )}
+            </div>
           </div>
         </div>
+      </section>
 
-        <div className="flex items-center gap-3">
-          <Badge variant="secondary" className="gap-2">
-            <MapPin className="w-3 h-3" />
-            {city}, {state}
-          </Badge>
-          {events && events.length > 0 && (
-            <p className="text-muted-foreground">
-              {events.length} event{events.length !== 1 ? "s" : ""} found
-            </p>
-          )}
-        </div>
-      </div>
-
+      {/* GRID */}
       {events && events.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {events.map((event) => (
             <EventCard
               key={event._id}
@@ -136,6 +149,6 @@ export default function DynamicExplorePage() {
           No events in {city}, {state} yet.
         </p>
       )}
-    </>
+    </div>
   );
 }

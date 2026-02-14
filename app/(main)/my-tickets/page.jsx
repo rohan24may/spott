@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity */
 "use client";
 
 import { useState } from "react";
@@ -11,7 +10,7 @@ import { toast } from "sonner";
 import QRCode from "react-qr-code";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -29,25 +28,24 @@ export default function MyTicketsPage() {
     api.registrations.getMyRegistrations
   );
 
-  const { mutate: cancelRegistration, isLoading: isCancelling } =
+  const { mutate: cancelRegistration } =
     useConvexMutation(api.registrations.cancelRegistration);
 
   const handleCancelRegistration = async (registrationId) => {
-    if (!window.confirm("Are you sure you want to cancel this registration?"))
-      return;
+    if (!window.confirm("Cancel this ticket?")) return;
 
     try {
       await cancelRegistration({ registrationId });
-      toast.success("Registration cancelled successfully.");
+      toast.success("Ticket cancelled");
     } catch (error) {
-      toast.error(error.message || "Failed to cancel registration");
+      toast.error(error.message || "Failed to cancel ticket");
     }
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
       </div>
     );
   }
@@ -58,27 +56,32 @@ export default function MyTicketsPage() {
     (reg) =>
       reg.event && reg.event.startDate >= now && reg.status === "confirmed"
   );
+
   const pastTickets = registrations?.filter(
     (reg) =>
       reg.event && (reg.event.startDate < now || reg.status === "cancelled")
   );
 
   return (
-    <div className="min-h-screen pb-20 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">My Tickets</h1>
-          <p className="text-muted-foreground">
-            View and manage your event registrations
+    <div className="min-h-screen px-4 pb-24 bg-gradient-to-br from-indigo-50 via-pink-50 to-orange-50">
+      <div className="max-w-7xl mx-auto space-y-12">
+
+        {/* HEADER */}
+        <div>
+          <h1 className="text-4xl md:text-5xl font-bold">
+            Your Tickets 🎟️
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Upcoming events and past experiences
           </p>
         </div>
 
-        {/* Upcoming Tickets */}
+        {/* UPCOMING */}
         {upcomingTickets?.length > 0 && (
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold mb-4">Upcoming Events</h2>
+          <div>
+            <h2 className="text-2xl font-bold mb-6">Upcoming Events</h2>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
               {upcomingTickets.map((registration) => (
                 <EventCard
                   key={registration._id}
@@ -92,12 +95,12 @@ export default function MyTicketsPage() {
           </div>
         )}
 
-        {/* Past Tickets */}
+        {/* PAST */}
         {pastTickets?.length > 0 && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Past Events</h2>
+            <h2 className="text-2xl font-bold mb-6">Past Events</h2>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
               {pastTickets.map((registration) => (
                 <EventCard
                   key={registration._id}
@@ -110,26 +113,35 @@ export default function MyTicketsPage() {
           </div>
         )}
 
-        {/* Empty State */}
+        {/* EMPTY */}
         {!upcomingTickets?.length && !pastTickets?.length && (
-          <Card className="p-12 text-center">
-            <div className="max-w-md mx-auto space-y-4">
-              <div className="text-6xl mb-4">🎟️</div>
-              <h2 className="text-2xl font-bold">No tickets yet</h2>
+          <Card className="p-14 text-center rounded-3xl">
+            <CardContent className="space-y-6">
+              <div className="text-6xl">🎟️</div>
+
+              <h2 className="text-2xl font-bold">
+                No tickets yet
+              </h2>
+
               <p className="text-muted-foreground">
-                Register for events to see your tickets here
+                Explore events and start attending amazing experiences.
               </p>
-              <Button asChild className="gap-2">
-                <Link href="/explore">
-                  <Ticket className="w-4 h-4" /> Browse Events
+
+              <Button
+                asChild
+                className="rounded-full bg-gradient-to-r from-indigo-600 via-pink-500 to-orange-400 text-white"
+              >
+                <Link href="/explore" className="flex gap-2 items-center">
+                  <Ticket className="w-4 h-4" />
+                  Browse Events
                 </Link>
               </Button>
-            </div>
+            </CardContent>
           </Card>
         )}
       </div>
 
-      {/* QR Code Modal */}
+      {/* QR MODAL */}
       {selectedTicket && (
         <Dialog
           open={!!selectedTicket}
@@ -140,12 +152,12 @@ export default function MyTicketsPage() {
               <DialogTitle>Your Ticket</DialogTitle>
             </DialogHeader>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="text-center">
-                <p className="font-semibold mb-1">
+                <p className="font-semibold">
                   {selectedTicket.attendeeName}
                 </p>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-sm text-muted-foreground">
                   {selectedTicket.event.title}
                 </p>
               </div>
@@ -155,32 +167,31 @@ export default function MyTicketsPage() {
               </div>
 
               <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-1">Ticket ID</p>
-                <p className="font-mono text-sm">{selectedTicket.qrCode}</p>
+                <p className="text-xs text-muted-foreground">Ticket ID</p>
+                <p className="font-mono text-sm">
+                  {selectedTicket.qrCode}
+                </p>
               </div>
 
               <div className="bg-muted p-4 rounded-lg space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  <span>
-                    {format(selectedTicket.event.startDate, "PPP, h:mm a")}
-                  </span>
+                  {format(selectedTicket.event.startDate, "PPP, h:mm a")}
                 </div>
+
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
-                  <span>
-                    {selectedTicket.event.locationType === "online"
-                      ? "Online Event"
-                      : `${selectedTicket.event.city}, ${
-                          selectedTicket.event.state ||
-                          selectedTicket.event.country
-                        }`}
-                  </span>
+                  {selectedTicket.event.locationType === "online"
+                    ? "Online Event"
+                    : `${selectedTicket.event.city}, ${
+                        selectedTicket.event.state ||
+                        selectedTicket.event.country
+                      }`}
                 </div>
               </div>
 
               <p className="text-xs text-muted-foreground text-center">
-                Show this QR code at the event entrance for check-in
+                Show this QR at event entrance
               </p>
             </div>
           </DialogContent>

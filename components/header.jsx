@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Building, Crown, Plus, Sparkles, Ticket } from "lucide-react";
-import { SignInButton, useAuth, UserButton, useUser } from "@clerk/nextjs";
+import { Building, Crown, Plus, Ticket } from "lucide-react";
+import { SignInButton, useAuth, UserButton } from "@clerk/nextjs";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { BarLoader } from "react-spinners";
 import { useStoreUser } from "@/hooks/use-store-user";
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import UpgradeModal from "./upgrade-modal";
 import { Badge } from "./ui/badge";
+import { LOGO } from "@/lib/constants";
 
 export default function Header() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -27,101 +28,129 @@ export default function Header() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-xl z-20 border-b">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/spott.png"
-              alt="Spott logo"
-              width={500}
-              height={500}
-              className="w-full h-11"
-              priority
-            />
-            {/* <span className="text-purple-500 text-2xl font-bold">spott*</span> */}
-            {hasPro && (
-              <Badge className="bg-linear-to-r from-pink-500 to-orange-500 gap-1 text-white ml-3">
-                <Crown className="w-3 h-3" />
-                Pro
-              </Badge>
-            )}
-          </Link>
+      <nav className="sticky top-0 bg-white/80 backdrop-blur-xl z-20 border-b">
+        {/* Gradient top glow */}
+        
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-pink-500/10 to-orange-400/10 blur-2xl pointer-events-none" />
 
-          {/* Search & Location - Desktop Only */}
-          <div className="hidden md:flex flex-1 justify-center">
+<div className="relative bg-white/80 backdrop-blur-xl border-b">
+  <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    
+    {/* LEFT SIDE */}
+    <Link href="/" className="flex items-center flex-shrink-0">
+      <Image
+        src="/logo-light.png"
+        alt="Spott"
+        width={200}
+        height={80}
+        className="h-18 w-auto object-contain"
+        priority
+      />
+    </Link>
+
+    {/* RIGHT SIDE */}
+    <div className="flex items-center gap-6">
+      {/* explore pricing signin etc */}
+    </div>
+
+
+
+              {hasPro && (
+                <Badge className="bg-gradient-to-r from-pink-500 to-orange-500 gap-1 text-white">
+                  <Crown className="w-3 h-3" />
+                  Pro
+                </Badge>
+              )}
+        
+
+            {/* SEARCH - desktop */}
+            <div className="hidden md:flex flex-1 max-w-xl">
+              <SearchLocationBar />
+            </div>
+
+            {/* RIGHT ACTIONS */}
+            <div className="flex items-center gap-2">
+
+              {/* Explore */}
+              <Button variant="ghost" size="sm" asChild className="font-medium">
+                <Link href="/explore">Explore</Link>
+              </Button>
+
+              {/* Pricing / Upgrade */}
+              {!hasPro && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="hidden sm:inline-flex"
+                >
+                  Pricing
+                </Button>
+              )}
+
+              <Authenticated>
+                {/* CREATE EVENT CTA */}
+                <Button
+                  size="sm"
+                  asChild
+                  className="flex gap-2 rounded-full bg-gradient-to-r from-indigo-600 via-pink-500 to-orange-400 text-white shadow-md hover:opacity-90"
+                >
+                  <Link href="/create-event">
+                    <Plus className="w-4 h-4" />
+                    <span className="hidden sm:inline">Create</span>
+                  </Link>
+                </Button>
+
+                {/* USER MENU */}
+                <UserButton
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      avatarBox:
+                        "w-9 h-9 ring-2 ring-indigo-500/30 hover:ring-indigo-500 transition",
+                    },
+                  }}
+                >
+                  <UserButton.MenuItems>
+                    <UserButton.Link
+                      label="My Tickets"
+                      labelIcon={<Ticket size={16} />}
+                      href="/my-tickets"
+                    />
+                    <UserButton.Link
+                      label="My Events"
+                      labelIcon={<Building size={16} />}
+                      href="/my-events"
+                    />
+                    <UserButton.Action label="manageAccount" />
+                  </UserButton.MenuItems>
+                </UserButton>
+              </Authenticated>
+
+              <Unauthenticated>
+                <SignInButton mode="modal">
+                  <Button
+                    size="sm"
+                    className="rounded-full bg-gradient-to-r from-indigo-600 via-pink-500 to-orange-400 text-white shadow"
+                  >
+                    Sign In
+                  </Button>
+                </SignInButton>
+              </Unauthenticated>
+            </div>
+          </div>
+
+          {/* MOBILE SEARCH */}
+          <div className="md:hidden border-t px-4 py-3 bg-white/70 backdrop-blur">
             <SearchLocationBar />
           </div>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center">
-            {/* Show Pro badge or Upgrade button */}
-            {!hasPro && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowUpgradeModal(true)}
-              >
-                Pricing
-              </Button>
-            )}
-
-            <Button variant="ghost" size="sm" asChild className={"mr-2"}>
-              <Link href="/explore">Explore</Link>
-            </Button>
-
-            <Authenticated>
-              {/* Create Event Button */}
-              <Button size="sm" asChild className="flex gap-2 mr-4">
-                <Link href="/create-event">
-                  <Plus className="w-4 h-4" />
-                  <span className="hidden sm:inline">Create Event</span>
-                </Link>
-              </Button>
-
-              {/* User Button */}
-              <UserButton
-                afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    avatarBox: "w-9 h-9",
-                  },
-                }}
-              >
-                <UserButton.MenuItems>
-                  <UserButton.Link
-                    label="My Tickets"
-                    labelIcon={<Ticket size={16} />}
-                    href="/my-tickets"
-                  />
-                  <UserButton.Link
-                    label="My Events"
-                    labelIcon={<Building size={16} />}
-                    href="/my-events"
-                  />
-                  <UserButton.Action label="manageAccount" />
-                </UserButton.MenuItems>
-              </UserButton>
-            </Authenticated>
-
-            <Unauthenticated>
-              <SignInButton mode="modal">
-                <Button size="sm" className="cursor-pointer">Sign In</Button>
-              </SignInButton>
-            </Unauthenticated>
-          </div>
+          {isLoading && (
+            <div className="absolute bottom-0 left-0 w-full">
+              <BarLoader width={"100%"} color="#7c3aed" />
+            </div>
+          )}
         </div>
-
-        {/* Mobile Search & Location - Below Header */}
-        <div className="md:hidden border-t px-3 py-3">
-          <SearchLocationBar />
-        </div>
-
-        {isLoading && (
-          <div className="absolute bottom-0 left-0 w-full">
-            <BarLoader width={"100%"} color="#a855f7" />
-          </div>
-        )}
       </nav>
 
       {/* Onboarding Modal */}
@@ -131,6 +160,7 @@ export default function Header() {
         onComplete={handleOnboardingComplete}
       />
 
+      {/* Upgrade Modal */}
       <UpgradeModal
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}

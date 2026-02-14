@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity */
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
@@ -30,28 +29,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getCategoryIcon, getCategoryLabel } from "@/lib/data";
 import RegisterModal from "./_components/register-modal";
 
-// Utility function to darken a color
-function darkenColor(color, amount) {
-  const colorWithoutHash = color.replace("#", "");
-  const num = parseInt(colorWithoutHash, 16);
-  const r = Math.max(0, (num >> 16) - amount * 255);
-  const g = Math.max(0, ((num >> 8) & 0x00ff) - amount * 255);
-  const b = Math.max(0, (num & 0x0000ff) - amount * 255);
-  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
-}
-
 export default function EventDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useUser();
   const [showRegisterModal, setShowRegisterModal] = useState(false);
 
-  // Fetch event details
   const { data: event, isLoading } = useConvexQuery(api.events.getEventBySlug, {
     slug: params.slug,
   });
 
-  // Check if user is already registered
   const { data: registration } = useConvexQuery(
     api.registrations.checkRegistration,
     event?._id ? { eventId: event._id } : "skip"
@@ -64,13 +51,10 @@ export default function EventDetailPage() {
         await navigator.share({
           title: event.title,
           text: event.description.slice(0, 100) + "...",
-          url: url,
+          url,
         });
-      } catch (error) {
-        // User cancelled or error occurred
-      }
+      } catch {}
     } else {
-      // Fallback: copy to clipboard
       navigator.clipboard.writeText(url);
       toast.success("Link copied to clipboard!");
     }
@@ -87,268 +71,224 @@ export default function EventDetailPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
       </div>
     );
   }
 
-  if (!event) {
-    notFound();
-  }
+  if (!event) notFound();
 
   const isEventFull = event.registrationCount >= event.capacity;
   const isEventPast = event.endDate < Date.now();
   const isOrganizer = user?.id === event.organizerId;
 
   return (
-    <div
-      style={{
-        backgroundColor: event.themeColor || "#1e3a8a",
-      }}
-      className="min-h-screen py-8 -mt-6 md:-mt-16 lg:-mx-5"
-    >
-      <div className="max-w-7xl mx-auto px-8">
-        {/* Event Title & Info */}
-        <div className="mb-8">
-          <Badge variant="secondary" className="mb-3">
-            {getCategoryIcon(event.category)} {getCategoryLabel(event.category)}
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">{event.title}</h1>
-          <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              <span>{format(event.startDate, "EEEE, MMMM dd, yyyy")}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              <span>
-                {format(event.startDate, "h:mm a")} -{" "}
-                {format(event.endDate, "h:mm a")}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Hero Image */}
-        {event.coverImage && (
-          <div className="relative h-[400px] rounded-2xl overflow-hidden mb-6">
-            <Image
-              src={event.coverImage}
-              alt={event.title}
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
+    <div className="space-y-10">
+      {/* HERO */}
+      <section className="relative h-[420px] rounded-3xl overflow-hidden">
+        {event.coverImage ? (
+          <Image
+            src={event.coverImage}
+            alt={event.title}
+            fill
+            className="object-cover"
+            priority
+          />
+        ) : (
+          <div
+            className="absolute inset-0"
+            style={{ backgroundColor: event.themeColor }}
+          />
         )}
 
-        <div className="grid lg:grid-cols-[1fr_380px] gap-8">
-          {/* Main Content */}
-          <div className="space-y-8">
-            {/* Description */}
-            <Card
-              className={"pt-0"}
-              style={{
-                backgroundColor: event.themeColor
-                  ? darkenColor(event.themeColor, 0.04)
-                  : "#1e3a8a",
-              }}
-            >
-              <CardContent className="pt-6">
-                <h2 className="text-2xl font-bold mb-4">About This Event</h2>
-                <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                  {event.description}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+        <div className="absolute bottom-0 p-8 md:p-12 text-white max-w-4xl">
+          <Badge className="mb-3 bg-white/90 text-black">
+            {getCategoryIcon(event.category)} {getCategoryLabel(event.category)}
+          </Badge>
+
+          <h1 className="text-3xl md:text-5xl font-bold mb-3">
+            {event.title}
+          </h1>
+
+          <div className="flex flex-wrap gap-5 text-sm text-white/90">
+            <span className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              {format(event.startDate, "PPP")}
+            </span>
+
+            <span className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              {format(event.startDate, "h:mm a")}
+            </span>
+
+            <span className="flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              {event.city}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* MAIN GRID */}
+      <div className="grid lg:grid-cols-[1fr_380px] gap-10">
+        {/* LEFT CONTENT */}
+        <div className="space-y-8">
+          {/* ABOUT */}
+          <Card className="rounded-2xl">
+            <CardContent className="pt-6">
+              <h2 className="text-2xl font-bold mb-4">About this event</h2>
+              <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                {event.description}
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* LOCATION */}
+          <Card className="rounded-2xl">
+            <CardContent className="pt-6">
+              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-indigo-500" />
+                Location
+              </h2>
+
+              <p className="font-medium mb-2">
+                {event.city}, {event.state || event.country}
+              </p>
+
+              {event.address && (
+                <p className="text-sm text-muted-foreground mb-3">
+                  {event.address}
                 </p>
-              </CardContent>
-            </Card>
+              )}
 
-            {/* Location Details */}
-            <Card
-              className={"pt-0"}
-              style={{
-                backgroundColor: event.themeColor
-                  ? darkenColor(event.themeColor, 0.04)
-                  : "#1e3a8a",
-              }}
-            >
-              <CardContent className="pt-6">
-                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                  <MapPin className="w-6 h-6 text-purple-500" />
-                  Location
-                </h2>
-
-                <div className="space-y-3">
-                  <p className="font-medium">
-                    {event.city}, {event.state || event.country}
-                  </p>
-                  {event.address && (
-                    <p className="text-sm text-muted-foreground">
-                      {event.address}
-                    </p>
-                  )}
-                  {event.venue && (
-                    <Button variant="outline" asChild className="gap-2">
-                      <a
-                        href={event.venue}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        View on Map
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Organizer Info */}
-            <Card
-              className={"pt-0"}
-              style={{
-                backgroundColor: event.themeColor
-                  ? darkenColor(event.themeColor, 0.04)
-                  : "#1e3a8a",
-              }}
-            >
-              <CardContent className="pt-6">
-                <h2 className="text-2xl font-bold mb-4">Organizer</h2>
-                <div className="flex items-center gap-3">
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage src="" />
-                    <AvatarFallback>
-                      {event.organizerName.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold">{event.organizerName}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Event Organizer
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar - Registration Card */}
-          <div className="lg:sticky lg:top-24 h-fit">
-            <Card
-              className={`overflow-hidden py-0`}
-              style={{
-                backgroundColor: event.themeColor
-                  ? darkenColor(event.themeColor, 0.04)
-                  : "#1e3a8a",
-              }}
-            >
-              <CardContent className="p-6 space-y-4">
-                {/* Price */}
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Price</p>
-                  <p className="text-3xl font-bold">
-                    {event.ticketType === "free"
-                      ? "Free"
-                      : `₹${event.ticketPrice}`}
-                  </p>
-                  {event.ticketType === "paid" && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Pay at event offline
-                    </p>
-                  )}
-                </div>
-
-                <Separator />
-
-                {/* Stats */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Users className="w-4 h-4" />
-                      <span className="text-sm">Attendees</span>
-                    </div>
-                    <p className="font-semibold">
-                      {event.registrationCount} / {event.capacity}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      <span className="text-sm">Date</span>
-                    </div>
-                    <p className="font-semibold text-sm">
-                      {format(event.startDate, "MMM dd")}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Clock className="w-4 h-4" />
-                      <span className="text-sm">Time</span>
-                    </div>
-                    <p className="font-semibold text-sm">
-                      {format(event.startDate, "h:mm a")}
-                    </p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Registration Button */}
-                {registration ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded-lg">
-                      <CheckCircle className="w-5 h-5" />
-                      <span className="font-medium">
-                        You&apos;re registered!
-                      </span>
-                    </div>
-                    <Button
-                      className="w-full gap-2"
-                      onClick={() => router.push("/my-tickets")}
-                    >
-                      <Ticket className="w-4 h-4" />
-                      View Ticket
-                    </Button>
-                  </div>
-                ) : isEventPast ? (
-                  <Button className="w-full" disabled>
-                    Event Ended
-                  </Button>
-                ) : isEventFull ? (
-                  <Button className="w-full" disabled>
-                    Event Full
-                  </Button>
-                ) : isOrganizer ? (
-                  <Button
-                    className="w-full"
-                    onClick={() => router.push(`/events/${event.slug}/manage`)}
-                  >
-                    Manage Event
-                  </Button>
-                ) : (
-                  <Button className="w-full gap-2" onClick={handleRegister}>
-                    <Ticket className="w-4 h-4" />
-                    Register for Event
-                  </Button>
-                )}
-
-                {/* Share Button */}
-                <Button
-                  variant="outline"
-                  className="w-full gap-2"
-                  onClick={handleShare}
-                >
-                  <Share2 className="w-4 h-4" />
-                  Share Event
+              {event.venue && (
+                <Button variant="outline" asChild className="gap-2 rounded-full">
+                  <a href={event.venue} target="_blank">
+                    View on map <ExternalLink className="w-4 h-4" />
+                  </a>
                 </Button>
-              </CardContent>
-            </Card>
-          </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* ORGANIZER */}
+          <Card className="rounded-2xl">
+            <CardContent className="pt-6">
+              <h2 className="text-2xl font-bold mb-4">Organizer</h2>
+
+              <div className="flex items-center gap-3">
+                <Avatar className="w-12 h-12">
+                  <AvatarImage src="" />
+                  <AvatarFallback>
+                    {event.organizerName.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+
+                <div>
+                  <p className="font-semibold">{event.organizerName}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Event organizer
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* SIDEBAR */}
+        <div className="lg:sticky lg:top-24 h-fit">
+          <Card className="rounded-3xl shadow-md">
+            <CardContent className="p-6 space-y-5">
+              {/* PRICE */}
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Price</p>
+                <p className="text-3xl font-bold">
+                  {event.ticketType === "free"
+                    ? "Free"
+                    : `₹${event.ticketPrice}`}
+                </p>
+              </div>
+
+              <Separator />
+
+              {/* STATS */}
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Attendees</span>
+                  <span className="font-semibold">
+                    {event.registrationCount}/{event.capacity}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Date</span>
+                  <span className="font-semibold">
+                    {format(event.startDate, "MMM dd")}
+                  </span>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* CTA */}
+              {registration ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded-lg">
+                    <CheckCircle className="w-5 h-5" />
+                    <span className="font-medium">You're registered!</span>
+                  </div>
+
+                  <Button
+                    className="w-full gap-2 rounded-full"
+                    onClick={() => router.push("/my-tickets")}
+                  >
+                    <Ticket className="w-4 h-4" />
+                    View Ticket
+                  </Button>
+                </div>
+              ) : isEventPast ? (
+                <Button className="w-full rounded-full" disabled>
+                  Event Ended
+                </Button>
+              ) : isEventFull ? (
+                <Button className="w-full rounded-full" disabled>
+                  Event Full
+                </Button>
+              ) : isOrganizer ? (
+                <Button
+                  className="w-full rounded-full"
+                  onClick={() =>
+                    router.push(`/events/${event.slug}/manage`)
+                  }
+                >
+                  Manage Event
+                </Button>
+              ) : (
+                <Button
+                  className="w-full gap-2 rounded-full bg-gradient-to-r from-indigo-600 via-pink-500 to-orange-400 text-white"
+                  onClick={handleRegister}
+                >
+                  <Ticket className="w-4 h-4" />
+                  Register Now
+                </Button>
+              )}
+
+              <Button
+                variant="outline"
+                className="w-full gap-2 rounded-full"
+                onClick={handleShare}
+              >
+                <Share2 className="w-4 h-4" />
+                Share Event
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
-      {/* Register Modal */}
+      {/* MODAL */}
       {showRegisterModal && (
         <RegisterModal
           event={event}

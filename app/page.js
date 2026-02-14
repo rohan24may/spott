@@ -5,75 +5,105 @@ import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="pb-16 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center relative z-10">
-          {/* Left content */}
-          <div className="text-center sm:text-left">
+    <div className="bg-gradient-to-br from-indigo-50 via-pink-50 to-orange-50">
+
+      {/* HERO */}
+      <section className="pt-24 pb-16 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-14 items-center px-6 relative z-10">
+
+          {/* LEFT */}
+          <div className="text-center lg:text-left">
+            
+            {/* Brand */}
             <div className="mb-6">
-              <span className="text-gray-500 font-light tracking-wide">
+              <span className="text-gray-500 font-light tracking-wide text-sm">
                 spott<span className="text-purple-400">*</span>
               </span>
             </div>
 
+            {/* Headline */}
             <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-[0.95] tracking-tight">
-              Discover &<br />
-              create amazing
+              Find what’s
               <br />
-              <span className="bg-linear-to-r from-blue-400 via-purple-400 to-orange-400 bg-clip-text text-transparent">
-                events.
+              happening around
+              <br />
+              <span className="bg-gradient-to-r from-indigo-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+                you.
               </span>
             </h1>
 
-            <p className="text-lg sm:text-xl text-gray-400 mb-12 max-w-lg font-light">
-              Whether you&apos;re hosting or attending, Spott makes every event
-              memorable. Join our community today.
+            {/* Description */}
+            <p className="text-lg sm:text-xl text-gray-500 mb-10 max-w-xl">
+              Discover concerts, tech meetups, workshops, college fests, and
+              more. Or create your own event and bring people together.
             </p>
 
-            <Link href="/explore">
-              <Button
-                     size="lg"
-                      className="rounded-full cursor-pointer px-6 py-5 text-base"
-                  >
-                    Get Started
-               </Button>
+            {/* CTA */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Link href="/explore">
+                <Button
+                  size="lg"
+                  className="rounded-full px-8 py-6 text-base bg-gradient-to-r from-indigo-600 via-pink-500 to-orange-400 text-white shadow-md"
+                >
+                  Explore Events
+                </Button>
+              </Link>
 
-            </Link>
+              <Link href="/create-event">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="rounded-full px-8 py-6 text-base"
+                >
+                  Host an Event
+                </Button>
+              </Link>
+            </div>
           </div>
 
-          {/* Right - 3D Phone Mockup */}
-          <div className="relative block">
+          {/* RIGHT VISUAL */}
+          <div className="relative">
             <Image
-              src="/hero.png"
-              // src="/hero.gif"
-              alt="react meetup"
+              src="/3d-react.png"
+              alt="Spott event preview"
               width={700}
               height={700}
               className="w-full h-auto"
               priority
             />
-            {/* <video
-              width="100%"
-              height="100%"
-              loop
-              playsInline
-              autoPlay
-              muted
-              className="w-full h-auto"
-            >
-              <source
-                src="https://cdn.lu.ma/landing/phone-dark.mp4"
-                type="video/mp4;codecs=hvc1"
-              />
-              <source
-                src="https://cdn.lu.ma/landing/phone-dark.webm"
-                type="video/webm"
-              />
-            </video> */}
           </div>
         </div>
       </section>
+
+      {/* INFO STRIP */}
+      <section className="pb-20">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h3 className="font-semibold text-lg mb-2">Discover events</h3>
+            <p className="text-sm text-gray-500">
+              Find events happening near you based on your interests and
+              location.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h3 className="font-semibold text-lg mb-2">Host & manage</h3>
+            <p className="text-sm text-gray-500">
+              Create events, manage attendees, and track registrations easily.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h3 className="font-semibold text-lg mb-2">Smart discovery</h3>
+            <p className="text-sm text-gray-500">
+              AI-powered suggestions help you find the right events faster.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
     </div>
   );
 }
