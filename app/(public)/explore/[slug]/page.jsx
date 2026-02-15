@@ -33,8 +33,8 @@ export default function DynamicExplorePage() {
     isCategory
       ? { category: slug, limit: 50 }
       : city && state
-        ? { city, state, limit: 50 }
-        : "skip"
+      ? { city, state, limit: 50 }
+      : "skip"
   );
 
   const handleEventClick = (eventSlug) => {
@@ -49,29 +49,38 @@ export default function DynamicExplorePage() {
     );
   }
 
-  /* ---------------- CATEGORY VIEW ---------------- */
+  /* ================= CATEGORY VIEW ================= */
 
   if (isCategory) {
     return (
-      <div className="space-y-10">
+      <div className="max-w-7xl mx-auto px-6 py-10 space-y-12">
+
         {/* HERO */}
-        <section className="rounded-3xl p-10 md:p-14 bg-gradient-to-br from-indigo-50 via-pink-50 to-orange-50 relative overflow-hidden">
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50 via-pink-50 to-orange-50 p-10 md:p-16 shadow-sm">
+          
+          {/* soft glow */}
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-pink-500/10 to-orange-500/10 blur-3xl" />
 
-          <div className="relative flex items-center gap-6">
-            <div className="text-6xl">{categoryInfo.icon}</div>
+          <div className="relative flex flex-col md:flex-row md:items-center gap-8">
+            
+            {/* Icon */}
+            <div className="text-6xl md:text-7xl">
+              {categoryInfo.icon}
+            </div>
 
-            <div>
-              <h1 className="text-4xl md:text-6xl font-bold">
+            {/* Text */}
+            <div className="space-y-3 max-w-2xl">
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
                 {categoryInfo.label}
               </h1>
-              <p className="text-lg text-muted-foreground mt-2 max-w-xl">
+
+              <p className="text-lg text-muted-foreground">
                 {categoryInfo.description}
               </p>
 
               {events && events.length > 0 && (
-                <p className="mt-4 text-sm text-muted-foreground">
-                  {events.length} event{events.length !== 1 ? "s" : ""} found
+                <p className="text-sm text-muted-foreground pt-2">
+                  {events.length} event{events.length !== 1 ? "s" : ""} available
                 </p>
               )}
             </div>
@@ -80,7 +89,7 @@ export default function DynamicExplorePage() {
 
         {/* GRID */}
         {events && events.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
             {events.map((event) => (
               <EventCard
                 key={event._id}
@@ -90,34 +99,41 @@ export default function DynamicExplorePage() {
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground">
-            No events found in this category.
-          </p>
+          <div className="py-24 text-center">
+            <p className="text-muted-foreground text-lg">
+              No events found in this category yet.
+            </p>
+          </div>
         )}
       </div>
     );
   }
 
-  /* ---------------- LOCATION VIEW ---------------- */
+  /* ================= LOCATION VIEW ================= */
 
   return (
-    <div className="space-y-10">
+    <div className="max-w-7xl mx-auto px-6 py-10 space-y-12">
+
       {/* HERO */}
-      <section className="rounded-3xl p-10 md:p-14 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 relative overflow-hidden">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 p-10 md:p-16 shadow-sm">
+        
+        {/* glow */}
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-blue-500/10 blur-3xl" />
 
-        <div className="relative flex items-center gap-6">
-          <div className="text-6xl">📍</div>
+        <div className="relative flex flex-col md:flex-row md:items-center gap-8">
+          
+          <div className="text-6xl md:text-7xl">📍</div>
 
-          <div>
-            <h1 className="text-4xl md:text-6xl font-bold">
+          <div className="space-y-3 max-w-2xl">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
               Events in {city}
             </h1>
-            <p className="text-lg text-muted-foreground mt-2">
+
+            <p className="text-lg text-muted-foreground">
               {state}, India
             </p>
 
-            <div className="flex items-center gap-3 mt-4">
+            <div className="flex items-center gap-4 pt-2">
               <Badge className="gap-2 bg-white/80 backdrop-blur">
                 <MapPin className="w-3 h-3" />
                 {city}, {state}
@@ -125,7 +141,7 @@ export default function DynamicExplorePage() {
 
               {events && events.length > 0 && (
                 <p className="text-sm text-muted-foreground">
-                  {events.length} event{events.length !== 1 ? "s" : ""} found
+                  {events.length} event{events.length !== 1 ? "s" : ""} available
                 </p>
               )}
             </div>
@@ -135,7 +151,7 @@ export default function DynamicExplorePage() {
 
       {/* GRID */}
       {events && events.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
           {events.map((event) => (
             <EventCard
               key={event._id}
@@ -145,9 +161,11 @@ export default function DynamicExplorePage() {
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground">
-          No events in {city}, {state} yet.
-        </p>
+        <div className="py-24 text-center">
+          <p className="text-muted-foreground text-lg">
+            No events found in {city}, {state} yet.
+          </p>
+        </div>
       )}
     </div>
   );

@@ -16,12 +16,14 @@ export default function EventCard({
   action = null,
   className = "",
 }) {
+
   /* ---------------- LIST VARIANT ---------------- */
 
   if (variant === "list") {
     return (
       <Card
-        className={`py-0 group cursor-pointer rounded-2xl overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all border-muted/40 ${className}`}
+        className={`py-0 group cursor-pointer rounded-2xl overflow-hidden border border-muted/40 
+        hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 bg-white ${className}`}
         onClick={onClick}
       >
         <CardContent className="p-3 flex gap-4 items-center">
@@ -33,7 +35,7 @@ export default function EventCard({
                 src={event.coverImage}
                 alt={event.title}
                 fill
-                className="object-cover"
+                className="object-cover group-hover:scale-105 transition duration-500"
               />
             ) : (
               <div
@@ -76,8 +78,11 @@ export default function EventCard({
 
   return (
     <Card
-      className={`overflow-hidden rounded-2xl group pt-0 bg-white border-muted/40 transition-all ${
-        onClick ? "cursor-pointer hover:-translate-y-1 hover:shadow-xl" : ""
+      className={`overflow-hidden rounded-2xl group pt-0 bg-white border border-muted/40 
+      transition-all duration-300 ${
+        onClick
+          ? "cursor-pointer hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-100"
+          : ""
       } ${className}`}
       onClick={onClick}
     >
@@ -87,7 +92,7 @@ export default function EventCard({
           <Image
             src={event.coverImage}
             alt={event.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             width={500}
             height={208}
             priority
@@ -102,17 +107,17 @@ export default function EventCard({
         )}
 
         {/* Top gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
 
         {/* Ticket type */}
         <div className="absolute top-3 right-3">
-          <Badge className="bg-white/90 text-black backdrop-blur">
+          <Badge className="bg-white/90 text-black backdrop-blur shadow-sm">
             {event.ticketType === "free" ? "Free" : "Paid"}
           </Badge>
         </div>
 
         {/* Date pill */}
-        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-medium">
+        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-medium shadow-sm">
           {format(event.startDate, "dd MMM")}
         </div>
       </div>
@@ -123,7 +128,7 @@ export default function EventCard({
         {/* Category */}
         <Badge
           variant="outline"
-          className="rounded-full px-3 py-1 text-xs font-medium"
+          className="rounded-full px-3 py-1 text-xs font-medium w-fit"
         >
           {getCategoryIcon(event.category)} {getCategoryLabel(event.category)}
         </Badge>
@@ -163,7 +168,7 @@ export default function EventCard({
             <Button
               variant="outline"
               size="sm"
-              className="flex-1 rounded-full"
+              className="flex-1 rounded-full hover:scale-[1.02] transition"
               onClick={(e) => {
                 e.stopPropagation();
                 onClick?.(e);

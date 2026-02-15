@@ -24,14 +24,19 @@ export default function RootLayout({ children }) {
             <ConvexClientProvider>
               <Header />
 
-             <main className="relative min-h-screen container mx-auto">
+              <main className="relative min-h-screen container mx-auto">
+                
                 {/* Light glow background */}
                 <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
                   <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl" />
                   <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl" />
                 </div>
 
-                <div className="relative z-10">{children}</div>
+                {/* Page content */}
+                <div className="relative z-10">
+                  {children}
+                </div>
+
                 <Footer />
               </main>
 

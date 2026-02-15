@@ -79,26 +79,67 @@ export default function ExplorePage() {
   }
 
   return (
-    <div className="space-y-20">
-      {/* HERO */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50 via-pink-50 to-orange-50 p-10 md:p-16 text-center">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-pink-500/10 to-orange-500/10 blur-3xl" />
+    <div className="space-y-24 animate-in fade-in duration-700">
 
-        <div className="relative">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            Discover what's happening 🎉
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Concerts, tech meetups, workshops, festivals — explore events
-            happening around you.
-          </p>
-        </div>
-      </section>
+      {/* HERO */}
+<section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50 via-pink-50 to-orange-50 p-10 md:p-16 text-center shadow-sm">
+
+  {/* glow */}
+  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-pink-500/10 to-orange-500/10 blur-3xl" />
+
+  <div className="relative max-w-3xl mx-auto">
+    <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
+      Discover what's happening 🎉
+    </h1>
+
+    <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+      Concerts, tech meetups, workshops, festivals — explore events
+      happening around you.
+    </p>
+
+    {/* QUICK DISCOVERY PILLS */}
+    <div className="flex flex-wrap justify-center gap-3">
+      <Button
+        variant="outline"
+        className="rounded-full bg-white/70 backdrop-blur hover:scale-105 transition"
+        onClick={handleViewLocalEvents}
+      >
+        📍 Near You
+      </Button>
+
+      <Button
+        variant="outline"
+        className="rounded-full bg-white/70 backdrop-blur hover:scale-105 transition"
+        onClick={() => router.push("/explore/free")}
+      >
+        🆓 Free Events
+      </Button>
+
+      <Button
+        variant="outline"
+        className="rounded-full bg-white/70 backdrop-blur hover:scale-105 transition"
+        onClick={() => router.push("/explore/online")}
+      >
+        💻 Online
+      </Button>
+
+      <Button
+        variant="outline"
+        className="rounded-full bg-white/70 backdrop-blur hover:scale-105 transition"
+        onClick={() => router.push("/explore/week")}
+      >
+        📅 This Week
+      </Button>
+    </div>
+  </div>
+</section>
 
       {/* FEATURED */}
       {featuredEvents && featuredEvents.length > 0 && (
-        <section>
-          <h2 className="text-3xl font-bold mb-6">Featured Events</h2>
+        <section className="animate-in slide-in-from-bottom duration-700">
+          <h2 className="text-3xl font-bold mb-6 tracking-tight">
+            Featured Events
+          </h2>
 
           <Carousel
             plugins={[plugin.current]}
@@ -110,7 +151,7 @@ export default function ExplorePage() {
               {featuredEvents.map((event) => (
                 <CarouselItem key={event._id}>
                   <div
-                    className="relative h-[420px] rounded-3xl overflow-hidden cursor-pointer group"
+                    className="relative h-[420px] rounded-3xl overflow-hidden cursor-pointer group shadow-sm hover:shadow-xl transition-all duration-500"
                     onClick={() => handleEventClick(event.slug)}
                   >
                     {event.coverImage ? (
@@ -118,7 +159,7 @@ export default function ExplorePage() {
                         src={event.coverImage}
                         alt={event.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                     ) : (
                       <div
@@ -162,10 +203,10 @@ export default function ExplorePage() {
 
       {/* LOCAL */}
       {localEvents && localEvents.length > 0 && (
-        <section>
+        <section className="animate-in slide-in-from-bottom duration-700">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold">Near You</h2>
+              <h2 className="text-3xl font-bold tracking-tight">Near You</h2>
               <p className="text-muted-foreground">
                 Events in {currentUser?.location?.city || "your area"}
               </p>
@@ -173,7 +214,7 @@ export default function ExplorePage() {
 
             <Button
               variant="outline"
-              className="gap-2 rounded-full"
+              className="gap-2 rounded-full hover:scale-105 transition"
               onClick={handleViewLocalEvents}
             >
               View All <ArrowRight className="w-4 h-4" />
@@ -193,15 +234,17 @@ export default function ExplorePage() {
       )}
 
       {/* CATEGORIES */}
-      <section>
-        <h2 className="text-3xl font-bold mb-6">Browse by Category</h2>
+      <section className="animate-in slide-in-from-bottom duration-700">
+        <h2 className="text-3xl font-bold mb-6 tracking-tight">
+          Browse by Category
+        </h2>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
           {categoriesWithCounts.map((category) => (
             <div
               key={category.id}
               onClick={() => handleCategoryClick(category.id)}
-              className="cursor-pointer rounded-2xl p-6 bg-gradient-to-br from-white to-indigo-50 hover:shadow-lg hover:-translate-y-1 transition"
+              className="cursor-pointer rounded-2xl p-6 bg-gradient-to-br from-white to-indigo-50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
               <div className="text-4xl mb-3">{category.icon}</div>
               <h3 className="font-semibold mb-1">{category.label}</h3>
@@ -215,8 +258,10 @@ export default function ExplorePage() {
 
       {/* POPULAR */}
       {popularEvents && popularEvents.length > 0 && (
-        <section>
-          <h2 className="text-3xl font-bold mb-6">Trending Across India</h2>
+        <section className="animate-in slide-in-from-bottom duration-700">
+          <h2 className="text-3xl font-bold mb-6 tracking-tight">
+            Trending Across India
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {popularEvents.map((event) => (
@@ -230,27 +275,6 @@ export default function ExplorePage() {
           </div>
         </section>
       )}
-
-      {/* EMPTY */}
-      {!loadingFeatured &&
-        !loadingLocal &&
-        !loadingPopular &&
-        (!featuredEvents || featuredEvents.length === 0) &&
-        (!localEvents || localEvents.length === 0) &&
-        (!popularEvents || popularEvents.length === 0) && (
-          <Card className="p-12 text-center rounded-3xl">
-            <div className="max-w-md mx-auto space-y-4">
-              <div className="text-6xl mb-4">🎉</div>
-              <h2 className="text-2xl font-bold">No events yet</h2>
-              <p className="text-muted-foreground">
-                Be the first to create an event in your area!
-              </p>
-              <Button asChild className="rounded-full">
-                <a href="/create-event">Create Event</a>
-              </Button>
-            </div>
-          </Card>
-        )}
     </div>
   );
 }

@@ -83,9 +83,10 @@ export default function EventDetailPage() {
   const isOrganizer = user?.id === event.organizerId;
 
   return (
-    <div className="space-y-10">
+    <div className="max-w-7xl mx-auto pt-6 px-6 space-y-16 pb-20">
+
       {/* HERO */}
-      <section className="relative h-[420px] rounded-3xl overflow-hidden">
+      <section className="relative h-[460px] rounded-3xl overflow-hidden shadow-sm">
         {event.coverImage ? (
           <Image
             src={event.coverImage}
@@ -101,18 +102,18 @@ export default function EventDetailPage() {
           />
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
 
-        <div className="absolute bottom-0 p-8 md:p-12 text-white max-w-4xl">
-          <Badge className="mb-3 bg-white/90 text-black">
+        <div className="absolute bottom-0 p-10 md:p-14 text-white max-w-4xl">
+          <Badge className="mb-4 bg-white/90 text-black backdrop-blur">
             {getCategoryIcon(event.category)} {getCategoryLabel(event.category)}
           </Badge>
 
-          <h1 className="text-3xl md:text-5xl font-bold mb-3">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">
             {event.title}
           </h1>
 
-          <div className="flex flex-wrap gap-5 text-sm text-white/90">
+          <div className="flex flex-wrap gap-6 text-sm text-white/90">
             <span className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
               {format(event.startDate, "PPP")}
@@ -132,22 +133,24 @@ export default function EventDetailPage() {
       </section>
 
       {/* MAIN GRID */}
-      <div className="grid lg:grid-cols-[1fr_380px] gap-10">
+      <div className="grid lg:grid-cols-[1fr_360px] gap-14">
+
         {/* LEFT CONTENT */}
-        <div className="space-y-8">
+        <div className="space-y-10">
+
           {/* ABOUT */}
-          <Card className="rounded-2xl">
-            <CardContent className="pt-6">
+          <Card className="rounded-3xl">
+            <CardContent className="pt-8 pb-8">
               <h2 className="text-2xl font-bold mb-4">About this event</h2>
-              <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+              <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed text-[15px]">
                 {event.description}
               </p>
             </CardContent>
           </Card>
 
           {/* LOCATION */}
-          <Card className="rounded-2xl">
-            <CardContent className="pt-6">
+          <Card className="rounded-3xl">
+            <CardContent className="pt-8 pb-8">
               <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-indigo-500" />
                 Location
@@ -158,7 +161,7 @@ export default function EventDetailPage() {
               </p>
 
               {event.address && (
-                <p className="text-sm text-muted-foreground mb-3">
+                <p className="text-sm text-muted-foreground mb-4">
                   {event.address}
                 </p>
               )}
@@ -174,11 +177,11 @@ export default function EventDetailPage() {
           </Card>
 
           {/* ORGANIZER */}
-          <Card className="rounded-2xl">
-            <CardContent className="pt-6">
+          <Card className="rounded-3xl">
+            <CardContent className="pt-8 pb-8">
               <h2 className="text-2xl font-bold mb-4">Organizer</h2>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <Avatar className="w-12 h-12">
                   <AvatarImage src="" />
                   <AvatarFallback>
@@ -200,7 +203,8 @@ export default function EventDetailPage() {
         {/* SIDEBAR */}
         <div className="lg:sticky lg:top-24 h-fit">
           <Card className="rounded-3xl shadow-md">
-            <CardContent className="p-6 space-y-5">
+            <CardContent className="p-7 space-y-6">
+
               {/* PRICE */}
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Price</p>

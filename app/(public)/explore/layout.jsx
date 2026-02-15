@@ -11,7 +11,7 @@ export default function ExploreLayout({ children }) {
 
   return (
     <div className="pb-16 min-h-screen">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-6 pt-7">
         {/* Back Button for nested routes */}
         {!isMainExplore && (
           <div className="mb-6">
