@@ -16,6 +16,7 @@ import UpgradeModal from "./upgrade-modal";
 import { Badge } from "./ui/badge";
 import { LOGO } from "@/lib/constants";
 
+
 export default function Header() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
@@ -52,9 +53,6 @@ export default function Header() {
     <div className="flex items-center gap-6">
       {/* explore pricing signin etc */}
     </div>
-
-
-
               {hasPro && (
                 <Badge className="bg-gradient-to-r from-pink-500 to-orange-500 gap-1 text-white">
                   <Crown className="w-3 h-3" />

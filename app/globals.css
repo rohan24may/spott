@@ -151,3 +151,14 @@
 .fade-up {
   animation: fadeUp 0.6s ease forwards;
 }
+html.dark {
+  background: #0b0b0c;
+}
+
+body {
+  @apply bg-white text-gray-900;
+}
+
+.dark body {
+  @apply bg-zinc-950 text-white;
+}
