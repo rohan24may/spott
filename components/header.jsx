@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import UpgradeModal from "./upgrade-modal";
 import { Badge } from "./ui/badge";
-import { LOGO } from "@/lib/constants";
+
 
 
 export default function Header() {
