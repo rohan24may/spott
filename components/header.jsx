@@ -24,7 +24,7 @@ export default function Header() {
   const { showOnboarding, handleOnboardingComplete, handleOnboardingSkip } =
     useOnboarding();
 
-  const { has } = useAuth();
+  const { has } = useAuth(); 
   const hasPro = has?.({ plan: "pro" });
 
   return (
