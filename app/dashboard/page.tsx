@@ -1,185 +1,155 @@
 "use client";
 
-import Link from "next/link";
-import { Calendar, Ticket, Plus, Users, ArrowRight } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { Loader2, Calendar, Users, Ticket } from "lucide-react";
+import { useConvexQuery } from "@/hooks/use-convex-query";
+import { api } from "@/convex/_generated/api";
+import EventCard from "@/components/event-card";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function DashboardPage() {
+  const router = useRouter();
+
+  /* ================= QUERIES ================= */
+
+  const { data: myEvents, isLoading: loadingEvents } =
+    useConvexQuery(api.events.getMyEvents);
+
+  const { data: myRegistrations, isLoading: loadingRegistrations } =
+    useConvexQuery(api.registrations.getMyRegistrations);
+
+  /* ================= SAFE FALLBACKS ================= */
+
+  const events = myEvents ?? [];
+  const registrations = myRegistrations ?? [];
+
+  const isLoading = loadingEvents || loadingRegistrations;
+
+  /* ================= CALCULATIONS ================= */
+
+  const upcomingRegistrations = registrations.filter(
+    (reg: any) =>
+      reg?.event &&
+      reg.event.startDate >= Date.now() &&
+      reg.status === "confirmed"
+  );
+
+  const totalAttendees = events.reduce(
+    (acc: number, event: any) =>
+      acc + (event.registrationCount ?? 0),
+    0
+  );
+
+  /* ================= LOADING ================= */
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+      </div>
+    );
+  }
+
+  /* ================= UI ================= */
+
   return (
-    <div className="space-y-12">
+    <div className="space-y-14">
 
-      {/* ================= WELCOME SECTION ================= */}
-
-      <section className="rounded-3xl p-10 md:p-14 bg-gradient-to-br from-indigo-50 via-white to-pink-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-pink-500/10 to-orange-500/10 blur-3xl" />
-
-        <div className="relative">
-          <h1 className="text-4xl md:text-5xl font-bold mb-3">
-            Welcome back 👋
-          </h1>
-          <p className="text-muted-foreground max-w-2xl">
-            Manage your events, track registrations, and discover what’s happening around you.
-          </p>
-
-          <div className="flex flex-wrap gap-4 mt-8">
-            <Button asChild className="gap-2 rounded-full">
-              <Link href="/create-event">
-                <Plus className="w-4 h-4" /> Create Event
-              </Link>
-            </Button>
-
-            <Button variant="outline" asChild className="gap-2 rounded-full">
-              <Link href="/explore">
-                Explore Events <ArrowRight className="w-4 h-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
+      {/* ================= HEADER ================= */}
+      <section>
+        <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Overview of your activity on Spott
+        </p>
       </section>
 
       {/* ================= STATS ================= */}
-
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-6">
-
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
         <Card className="rounded-2xl">
-          <CardContent className="p-6">
-            <p className="text-sm text-muted-foreground mb-1">Upcoming</p>
-            <h3 className="text-3xl font-bold">0</h3>
-            <div className="flex items-center gap-2 mt-2 text-indigo-600 text-sm">
-              <Calendar className="w-4 h-4" />
-              Events registered
+          <CardContent className="p-6 flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">My Events</p>
+              <h2 className="text-3xl font-bold">{events.length}</h2>
             </div>
+            <Calendar className="w-8 h-8 text-indigo-500" />
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl">
-          <CardContent className="p-6">
-            <p className="text-sm text-muted-foreground mb-1">My Events</p>
-            <h3 className="text-3xl font-bold">0</h3>
-            <div className="flex items-center gap-2 mt-2 text-indigo-600 text-sm">
-              <Users className="w-4 h-4" />
-              Events created
+          <CardContent className="p-6 flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Total Attendees</p>
+              <h2 className="text-3xl font-bold">{totalAttendees}</h2>
             </div>
+            <Users className="w-8 h-8 text-pink-500" />
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl">
-          <CardContent className="p-6">
-            <p className="text-sm text-muted-foreground mb-1">Tickets</p>
-            <h3 className="text-3xl font-bold">0</h3>
-            <div className="flex items-center gap-2 mt-2 text-indigo-600 text-sm">
-              <Ticket className="w-4 h-4" />
-              Registered tickets
+          <CardContent className="p-6 flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Upcoming Tickets</p>
+              <h2 className="text-3xl font-bold">
+                {upcomingRegistrations.length}
+              </h2>
             </div>
+            <Ticket className="w-8 h-8 text-orange-500" />
           </CardContent>
         </Card>
-
-        <Card className="rounded-2xl">
-          <CardContent className="p-6">
-            <p className="text-sm text-muted-foreground mb-1">Activity</p>
-            <h3 className="text-3xl font-bold">—</h3>
-            <div className="flex items-center gap-2 mt-2 text-indigo-600 text-sm">
-              Last interaction
-            </div>
-          </CardContent>
-        </Card>
-
       </section>
+
+      {/* ================= MY EVENTS ================= */}
+      {events.length > 0 && (
+        <section className="space-y-6">
+          <h2 className="text-2xl font-bold">Your Events</h2>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {events.slice(0, 6).map((event: any) => (
+              <EventCard
+                key={event._id}
+                event={event}
+                onClick={() => router.push(`/my-events/${event._id}`)}
+                onDelete={() => {}}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ================= UPCOMING EVENTS ================= */}
+      {upcomingRegistrations.length > 0 && (
+        <section className="space-y-6">
+          <h2 className="text-2xl font-bold">Upcoming Registrations</h2>
 
-      <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Your Upcoming Events</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {upcomingRegistrations.slice(0, 6).map((reg: any) => (
+              <EventCard
+                key={reg._id}
+                event={reg.event}
+                onClick={() =>
+                  router.push(`/events/${reg.event.slug}`)
+                }
+                onDelete={() => {}}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-          <Button variant="outline" size="sm" asChild className="rounded-full">
-            <Link href="/my-tickets">View All</Link>
-          </Button>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* EventCard components will go here later */}
-          <Card className="p-8 text-center rounded-2xl">
+      {/* ================= EMPTY STATE ================= */}
+      {events.length === 0 && registrations.length === 0 && (
+        <Card className="p-12 text-center rounded-3xl">
+          <CardContent>
+            <h3 className="text-xl font-semibold mb-2">
+              Nothing here yet
+            </h3>
             <p className="text-muted-foreground">
-              No upcoming events yet.
+              Create or register for events to see them here.
             </p>
-          </Card>
-        </div>
-      </section>
-
-      {/* ================= RECOMMENDED ================= */}
-
-      <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Recommended For You</h2>
-
-          <Button variant="outline" size="sm" asChild className="rounded-full">
-            <Link href="/explore">Explore More</Link>
-          </Button>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* EventCard components will go here */}
-          <Card className="p-8 text-center rounded-2xl">
-            <p className="text-muted-foreground">
-              Personalized events will appear here.
-            </p>
-          </Card>
-        </div>
-      </section>
-
-      {/* ================= QUICK ACTIONS ================= */}
-
-      <section>
-        <h2 className="text-2xl font-bold mb-6">Quick Actions</h2>
-
-        <div className="grid md:grid-cols-4 gap-6">
-
-          <Link href="/create-event">
-            <Card className="p-6 rounded-2xl hover:shadow-md hover:-translate-y-1 transition cursor-pointer">
-              <Plus className="mb-4 text-indigo-600" />
-              <h3 className="font-semibold mb-1">Create Event</h3>
-              <p className="text-sm text-muted-foreground">
-                Host your own event in minutes
-              </p>
-            </Card>
-          </Link>
-
-          <Link href="/explore">
-            <Card className="p-6 rounded-2xl hover:shadow-md hover:-translate-y-1 transition cursor-pointer">
-              <Calendar className="mb-4 text-indigo-600" />
-              <h3 className="font-semibold mb-1">Explore</h3>
-              <p className="text-sm text-muted-foreground">
-                Discover events around you
-              </p>
-            </Card>
-          </Link>
-
-          <Link href="/my-events">
-            <Card className="p-6 rounded-2xl hover:shadow-md hover:-translate-y-1 transition cursor-pointer">
-              <Users className="mb-4 text-indigo-600" />
-              <h3 className="font-semibold mb-1">My Events</h3>
-              <p className="text-sm text-muted-foreground">
-                Manage created events
-              </p>
-            </Card>
-          </Link>
-
-          <Link href="/my-tickets">
-            <Card className="p-6 rounded-2xl hover:shadow-md hover:-translate-y-1 transition cursor-pointer">
-              <Ticket className="mb-4 text-indigo-600" />
-              <h3 className="font-semibold mb-1">My Tickets</h3>
-              <p className="text-sm text-muted-foreground">
-                View your registrations
-              </p>
-            </Card>
-          </Link>
-
-        </div>
-      </section>
-
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
