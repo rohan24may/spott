@@ -1,4 +1,4 @@
-```md
+
 # 🚀 Spott
 
 Spott is a modern event discovery and management platform built with **Next.js, Convex, and Clerk**.  
